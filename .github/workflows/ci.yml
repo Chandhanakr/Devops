@@ -40,22 +40,21 @@ jobs:
           path: target/*.jar
           retention-days: 5
 
-  deploy-staging:
+  deploy-production:
     needs: build-and-validate
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    environment: staging
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Deploy to Staging Container
+      - name: Deploy to Production Environment
         run: |
-          echo "Approval granted! Deploying to staging stack..."
-          docker compose up -d
+          echo "CI tests passed. Deploying straight to Production automatically..."
+          docker compose up -d --force-recreate
           docker compose ps
 
-      - name: Verify Staging
+      - name: Verify Production
         run: |
           sleep 5
           curl -f http://localhost:8085
